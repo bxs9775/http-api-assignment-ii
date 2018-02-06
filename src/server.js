@@ -9,16 +9,19 @@ const port = process.env.PORT || process.env.NODE_PORT || 3000;
 // function pointer structs
 const endpoints = {
   GET: {
-
+    '/': htmlHandler.getIndex,
+    '/style.css': htmlHandler.getCss,
+    '/getUsers': userDataHandler.getUsers,
+    '/notReal': htmlHandler.getNotFound,
   },
   HEAD: {
-
+    '/getUsers': userDataHandler.getUsersHead,
+    '/notReal': htmlHandler.getNotFoundHead,
   },
   POST: {
-
+    '/addUser': userDataHandler.addUser,
   },
 };
-const notFound = htmlHandler.getNotFound;
 
 // an onRequest event to handle incoming http requests
 const onRequest = (request, response) => {
@@ -26,7 +29,7 @@ const onRequest = (request, response) => {
   const parsedURL = url.parse(request.url);
 
   const path = parsedURL.pathname;
-  const requestMethod = response.method;
+  const requestMethod = request.method;
 
   let pageFound = false;
 
@@ -38,7 +41,11 @@ const onRequest = (request, response) => {
   }
 
   if (!pageFound) {
-    notFound(request, response);
+    if (requestMethod === 'HEAD') {
+      endpoints.HEAD['/notReal'](request, response);
+    } else {
+      endpoints.GET['/notReal'](request, response);
+    }
   }
 };
 
