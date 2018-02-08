@@ -5,21 +5,7 @@ const baseResponse = require('./baseResponse.js');
 const users = {};
 const numUsers = 0;
 
-const jsonMessageToXML = (json) => {
-  let xmlObj = '<response>';
-  if (json.id) {
-    xmlObj = `${xmlObj}<id>${json.id}</id>`;
-  }
-  if (json.message) {
-    xmlObj = `${xmlObj}<message>${json.message}</message>`;
-  }
-  xmlObj = `${xmlObj}</response>`;
-
-  return xmlObj;
-};
-
 const addUserFromBody = (request, response, body) => {
-  const accept = request.headers.accept.split(',');
   const jsonResponse = {
     message: 'Both name and age are required in the response.',
   };
@@ -32,12 +18,7 @@ const addUserFromBody = (request, response, body) => {
 
   if (!body.name || !body.age) {
     jsonResponse.id = 'missingParams';
-    if (accept[0] === 'text/xml') {
-      const xmlObj = jsonMessageToXML(jsonResponse);
-      baseResponse.writeResponse(response, 400, xmlObj, accept[0]);
-    } else {
-      baseResponse.writeResponse(response, 400, JSON.stringify(jsonResponse), 'application/json');
-    }
+    return baseResponse.writeResponse(response, 400, JSON.stringify(jsonResponse), 'application/json');
   }
 
   const userObj = {
@@ -49,10 +30,9 @@ const addUserFromBody = (request, response, body) => {
   users[body.name] = userObj;
 
   if (!newUser) {
-    baseResponse.writeErrorHead(response, 204, accept);
-  } else {
-    baseResponse.writeError(response, 201, accept);
+    return baseResponse.writeErrorHead(response, 204);
   }
+  return baseResponse.writeError(response, 201);
 };
 
 const parseBody = (request, response) => {
