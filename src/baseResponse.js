@@ -39,7 +39,7 @@ const writeError = (response, errCode, accept) => {
 };
 
 const writeErrorHead = (response, errCode, accept) => {
-  if(accept[0] === 'text/xml'){
+  if (accept[0] === 'text/xml') {
     writeResponseHead(response, errCode, accept[0]);
   } else {
     writeResponseHead(response, errCode, 'application/json');
