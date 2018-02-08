@@ -6,8 +6,34 @@
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel">
-    const handleResponse = (xhr) => {
-      console.dir(xhr);
+    const handleResponse = (xhr,action,method) => {
+      const content = document.querySelector("#content");
+      while(content.firstChild){
+        content.removeChild(content.firstChild);
+      }
+      
+      let header = document.createElement("h1");
+      switch(xhr.status){
+        case 200:
+          header.textContent = "Success";
+          break;
+        case 201:
+          header.textContent = "Created";
+          break;
+        case 204:
+          header.textContent = "Updated (No Content)";
+          break;
+        case 400:
+          header.textContent = "Bad Request";
+          break;
+        case 404:
+          header.textContent = "Not Found";
+          break;
+        default:
+          header.textContent = "Unimplemented Error Type";
+          break;
+      }
+      content.appendChild(header);
     }
     
     const sendRequest = (e,form) => {
@@ -29,7 +55,7 @@
         xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
       }
       
-      xhr.onload = () => handleResponse(xhr);
+      xhr.onload = () => handleResponse(xhr,action,method);
       
       if(form.id === 'nameForm'){
         const nameField = form.querySelector("#nameField");
