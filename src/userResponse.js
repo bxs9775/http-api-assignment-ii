@@ -14,8 +14,6 @@ const addUserFromBody = (request, response, body) => {
     return response;
   }
 
-  console.dir(body);
-
   if (!body.name || !body.age) {
     jsonResponse.id = 'missingParams';
     return baseResponse.writeResponse(response, 400, JSON.stringify(jsonResponse), 'application/json');
@@ -36,18 +34,14 @@ const addUserFromBody = (request, response, body) => {
 };
 
 const parseBody = (request, response) => {
-  console.log('Running parseBody();');
-
   // Stores parts of the body when they are loaded in
   const body = [];
 
   // Creates an event error to handle things when an error occurs.
   request.on('error', (err) => {
-    console.dir('OnError');
-
     console.dir(err);
     response.statusCode = 400;
-    response.end();
+    response.end(err);
   });
 
   // Identifies when data is retrieved and adds it to the body object.
@@ -57,8 +51,6 @@ const parseBody = (request, response) => {
 
   // Handles the end of the stream.
   request.on('end', () => {
-    console.dir('OnEnd');
-
     // uses Buffer to concatinate the body and convert it to a string
     const bodyString = Buffer.concat(body).toString();
 
@@ -101,8 +93,6 @@ const getUsersHead = (request, response) => {
 
 
 const addUser = (request, response) => {
-  console.log('Running addUser()');
-
   parseBody(request, response);
 };
 
