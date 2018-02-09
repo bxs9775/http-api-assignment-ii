@@ -34,6 +34,41 @@
           break;
       }
       content.appendChild(header);
+      
+      if(method !== 'head' && xhr.status !== 204){
+        const jsonObj = JSON.parse(xhr.response);
+        if(action === '/getUsers'){
+          /*
+          const p = document.createElement('p');
+          p.textContent = JSON.stringify(jsonObj);
+          content.appendChild(p);
+          */
+          const p1 = document.createElement('p');
+          p1.textContent = '{';
+          content.appendChild(p1);
+          var user;
+          for(user in jsonObj){
+            console.dir(jsonObj[user]);
+            const p2 = document.createElement('p');
+            p2.textContent = `\"${user}\" : { \"name\": \"${user}\" , \"age\": \"${jsonObj[user].age}\" }`
+            content.appendChild(p2);
+          }
+          const p3 = document.createElement('p');
+          p3.textContent = '}';
+          content.appendChild(p3);
+        } else {
+          if(jsonObj.id){
+            const idElement = document.createElement('p');  
+            idElement.textContent = `id: ${jsonObj.id}`;
+            content.appendChild(idElement);
+          }
+          if(jsonObj.message){
+            const message = document.createElement('p');
+            message.textContent = `message: ${jsonObj.message}`;
+            content.appendChild(message);
+          }
+        }
+      }
     }
     
     const sendRequest = (e,form) => {
